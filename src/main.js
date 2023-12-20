@@ -2,7 +2,7 @@
  * @Author: zoey
  * @Date: 2023-08-28 15:45:37
  * @LastEditors: zoey
- * @LastEditTime: 2023-12-18 10:37:57
+ * @LastEditTime: 2023-12-18 11:22:45
  * @Description: 请填写简介
  */
 import { createApp } from 'vue'
@@ -39,7 +39,7 @@ import MessageBox from './components/MessageBox/index.js'
 
 
 //vue自定义方法
-const app = createApp(App).use(router)
+const app = createApp(App)
 app.config.globalProperties.$message = Message
 app.config.globalProperties.$confirm = MessageBox
 //app.use(store)

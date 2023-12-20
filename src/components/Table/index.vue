@@ -2,7 +2,7 @@
  * @Author: zoey
  * @Date: 2023-11-16 22:12:02
  * @LastEditors: zoey
- * @LastEditTime: 2023-11-19 21:47:21
+ * @LastEditTime: 2023-12-20 20:38:43
  * @Description: 请填写简介
 -->
 <!--
@@ -21,11 +21,11 @@
       </div>
       <!-- 表头 -->
       <div class="zoey-table_header-wrapper">
-        <table-header :store="store"></table-header>
+        <table-header :store="store" ref="tableHeader"></table-header>
       </div>
       <!-- 表体 -->
       <div class="zoey-table_body-wrapper">
-        <table-body :store="store" :stripe="stripe"></table-body>
+        <table-body :store="store" :stripe="stripe" ref="tableBody"></table-body>
       </div>
     </table>
   </div>
@@ -34,6 +34,7 @@
   import TableStore from './table.store.js'
   import TableHeader from './tableHeader.vue'
   import TableBody from './tableBody.vue'
+  import { ref, onMounted, getCurrentInstance } from 'vue'
   export default {
     name: 'ZoeyTable',
     props: {
@@ -80,7 +81,50 @@
         }
       }
     },
+    setup(props, context) {
+      let tableBody = ref(null)
+      let tableHeader = ref(null)
+      const instance = getCurrentInstance()
+      const rowClick = (preindex, item, event) => {
+        context.emit('rowClick', preindex + 1, item, event)
+      }
+      onMounted(() => {
+        console.log("tableBody", tableBody)
+        console.log("tableHeader", tableHeader)
+      })
+      function select(row) {
+        context.emit('select', instance.data.store.state.selectedColumns, row)
+      }
+      function selectAll(selection) {
+        context.emit('selectAll', selection)
+      }
+      function cellMouseEnter(row, column, cell, event) {
+        context.emit('cellMouseEnter', row, column, cell, event)
+      }
+      function cellMouseLeave(row, column, cell, event) {
+        context.emit('cellMouseLeave', row, column, cell, event)
+      }
+      return {
+        tableBody,
+        tableHeader,
+        rowClick,
+        select,
+        selectAll,
+        cellMouseEnter,
+        cellMouseLeave
+      }
+    },
     methods: {
+      toggleRowSelection(row) {
+        this.store.commit('insertSelectedColumn', row)
+      },
+      clearSelection() {
+        this.store.commit('selectNone')
+      },
+      toggleAllSelection() {
+        this.store.commit('selectAll')
+      },
+
     },
   }
 </script>
